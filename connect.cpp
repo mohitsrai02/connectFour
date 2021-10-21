@@ -12,6 +12,7 @@ public:
     int temp;
     int insert;
     int count = 0;
+    int reset = 0;
     string player1 = "r";
     string player2 = "y";
     string player;
@@ -23,7 +24,7 @@ public:
     void startGame();
     void insertDisk(int rowNum, string player);
     string checkVertical(string player);
-    string checkH(string player);
+    string checkHorizontal(string player);
 };
 
 int main()
@@ -45,6 +46,7 @@ void connect::startGame()
     {
         if (turnCount % 2 != 0)
         {
+            player = "r";
             cout << endl
                  << "Red's Turn" << endl
                  << "Enter Row No. where you would Like to insert your disk : ";
@@ -77,29 +79,44 @@ void connect::startGame()
         {
             cout << "Game Over" << endl
                  << "Result : Draw" << endl;
+            cout << "Would you like to continue ? Enter 1 for yes, anything else for no." << endl;
+            cin >> reset;
+            if (reset == 1)
+            {
+                initialize();
+                startGame();
+            }
+
             break;
         }
     }
 }
 //for horizontal
-string connect::checkH(string player)
+string connect::checkHorizontal(string player)
 {
     for (int x = 0; x <= r; x++)
     {
-        if (board[c][insert+x] == player)
+        if (board[c][insert + x] == player)
         {
             ++count;
         }
-        if (board[c][insert-x] == player)
+        if (board[c][insert - x] == player)
         {
             ++count;
         }
-
     }
     --count;
     if (count >= p)
     {
         cout << "Player " << player << " has won the game" << endl;
+        cout << "Would you like to continue ? Enter 1 for yes, anything else for no." << endl;
+        cin >> reset;
+        if (reset == 1)
+        {
+            count = 0;
+            initialize();
+            startGame();
+        }
         return player;
     }
     else
@@ -121,6 +138,14 @@ string connect::checkVertical(string player)
     if (count >= p)
     {
         cout << "Player " << player << " has won the game" << endl;
+        cout << "Would you like to continue ? Enter 1 for yes, anything else for no." << endl;
+        cin >> reset;
+        if (reset == 1)
+        {
+            count = 0;
+            initialize();
+            startGame();
+        }
         return player;
     }
     else
@@ -139,13 +164,15 @@ void connect::insertDisk(int rowNum, string player)
         {
             board[temp][rowNum] = player;
 
-        winner = checkVertical(player);
+            winner = checkVertical(player);
             if (winner == "r" || winner == "y")
-            {}
-            else{
-                winner = checkH(player);
+            {
             }
-            
+            else
+            {
+                winner = checkHorizontal(player);
+            }
+
             break;
         }
         --temp;
@@ -163,10 +190,11 @@ connect::connect()
     cin >> c;
     cout << "Enter win connections required:-" << endl;
     cin >> p;
-    maxTurns = r * c;
 }
 void connect::initialize()
 {
+    turnCount = 1;
+    maxTurns = (r * c) + 1;
     for (int i = 1; i <= c; i++)
     {
         board[0][i] = to_string(i);
