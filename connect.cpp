@@ -1,25 +1,159 @@
 #include <string>
 #include <iostream>
+#include <conio.h>
 using namespace std;
-void printBoard(int row, int col, string arr[40][40]);
-void insertDisk(int row, int col, int rowNum, string player, string arr[40][40]);
-int main()
+class connect
 {
+public:
     int r, c, p;
     string board[40][40];
-    cout << "Enter no. of rows and columbs:-" << endl;
-    cin >> r >> c;
     int maxTurns = r * c;
-    int turnCount = 0;
+    int turnCount = 1;
+    int temp;
     int insert;
+    int count = 0;
+    int reset=0;
+    string player1 = "r";
+    string player2 = "y";
+    string player;
+    string winner = "none";
+    connect();
+    ~connect();
+    void printBoard();
+    void initialize();
+    void startGame();
+    void insertDisk(int rowNum, string player);
+    string checkVertical(string player);
+    string checkH(string player);
+};
+
+int main()
+{
+    connect game;
+    game.initialize();
+    game.startGame();
+    return 0;
+}
+
+connect::~connect()
+{
+}
+void connect::startGame()
+{
+    printBoard();
+    //Setting up an Infinite while loop
+    while (1)
+    {
+        if (turnCount % 2 != 0)
+        {
+            cout << endl
+                 << "Red's Turn" << endl
+                 << "Enter Row No. where you would Like to insert your disk : ";
+            cin >> insert;
+            turnCount++;
+            insertDisk(insert, player1);
+            printBoard();
+            if (winner == "r")
+            {
+                break;
+            }
+        }
+        else
+        {
+            player = 'y';
+            cout << endl
+                 << "Yellow's Turn" << endl
+                 << "Enter Row No. where you would Like to insert your disk : ";
+            cin >> insert;
+            turnCount++;
+            insertDisk(insert, player2);
+            printBoard();
+            if (winner == "y")
+            {
+                break;
+            }
+        }
+        cout << maxTurns - turnCount << " turns remaining" << endl;
+        if (turnCount == maxTurns)
+        {
+            cout << "Game Over" << endl
+                 << "Result : Draw" << endl;
+                 cout<<"Would you like to continue ?Type 1 for yes, type anything else to exit";
+                 cin>>reset;
+                 if(reset == 1){
+                     
+                     initialize();
+                     startGame();
+                 }
+            break;
+        }
+    }
+}
+
+string connect::checkVertical(string player)
+{
+    //for vertical
+    for (int x = 0; x <= r; x++)
+    {
+        if (board[c - x][insert] == player)
+        {
+            cout << "condition one is true" << endl
+                 << count;
+            ++count;
+            cout << endl
+                 << count << " matching disk found " << player << endl;
+        }
+        else{
+            break;
+        }
+    }
+    if (count >= p)
+    {
+        cout << "Player " << player << " has won the game" << endl;
+        return player;
+    }
+    else
+    {
+        count = 0;
+    }
+    return "continue";
+}
+
+void connect::insertDisk(int rowNum, string player)
+{
+    temp = c;
+    while (1)
+    {
+        if (board[temp][rowNum] == "O")
+        {
+            board[temp][rowNum] = player;
+            winner = checkVertical(player);
+            break;
+        }
+        --temp;
+        if (temp == 0)
+        {
+            break;
+        }
+    }
+}
+connect::connect()
+{
+    cout << "Enter no. of rows:-" << endl;
+    cin >> r;
+    cout << "Enter no. of columns:-" << endl;
+    cin >> c;
     cout << "Enter win connections required:-" << endl;
     cin >> p;
-    //Initializing Row numbers
+}
+void connect::initialize()
+{
+    maxTurns = (r*c)+1;
+    turnCount = 1;
     for (int i = 1; i <= c; i++)
     {
         board[0][i] = to_string(i);
     }
-    //Initializing the 2D array with O
     for (int i = 1; i <= r; i++)
     {
         for (int j = 1; j <= c; j++)
@@ -27,56 +161,14 @@ int main()
             board[i][j] = "O";
         }
     }
-
-    printBoard(r, c, board);
-
-    string player1 = "r";
-    string player2 = "y";
-    //Setting up an Infinite while loop
-    while (1)
-    {
-        if (turnCount % 2 != 0)
-        {
-            turnCount++;
-            cout << endl
-                 << "Red's Turn" << endl
-                 << "Enter Row No. where you would Like to insert your disk : ";
-            cin >> insert;
-            insertDisk(r,c,insert, player2,board);
-            printBoard(r, c, board);
-        }
-        else
-        {
-            turnCount++;
-            cout << endl
-                 << "Yellow's Turn" << endl
-                 << "Enter Row No. where you would Like to insert your disk : ";
-            cin >> insert;
-            insertDisk(r,c,insert, player2,board);
-            printBoard(r, c, board);
-        }
-        if (turnCount == maxTurns)
-        {
-            break;
-        }
-    }
-    return 0;
 }
-//Insert Disk in board Function
-
-void insertDisk(int row, int col, int rowNum, string player, string arr[40][40]){
-    arr[2][2] = player;
-
-}
-
-//Print Board Function
-void printBoard(int row, int col, string arr[40][40])
+void connect::printBoard()
 {
-    for (int i = 0; i <= row; i++)
+    for (int i = 0; i <= r; i++)
     {
-        for (int j = 1; j <= row; j++)
+        for (int j = 1; j <= r; j++)
         {
-            cout << "|" << arr[i][j] << "|";
+            cout << "|" << board[i][j] << "|";
         }
         cout << endl;
     }
