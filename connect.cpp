@@ -12,7 +12,6 @@ public:
     int temp;
     int insert;
     int count = 0;
-    int reset=0;
     string player1 = "r";
     string player2 = "y";
     string player;
@@ -78,33 +77,45 @@ void connect::startGame()
         {
             cout << "Game Over" << endl
                  << "Result : Draw" << endl;
-                 cout<<"Would you like to continue ?Type 1 for yes, type anything else to exit";
-                 cin>>reset;
-                 if(reset == 1){
-                     
-                     initialize();
-                     startGame();
-                 }
             break;
         }
     }
 }
+//for horizontal
+string connect::checkH(string player)
+{
+    for (int x = 0; x <= r; x++)
+    {
+        if (board[c][insert+x] == player)
+        {
+            ++count;
+        }
+        if (board[c][insert-x] == player)
+        {
+            ++count;
+        }
 
+    }
+    --count;
+    if (count >= p)
+    {
+        cout << "Player " << player << " has won the game" << endl;
+        return player;
+    }
+    else
+    {
+        count = 0;
+    }
+    return "continue";
+}
+//for vertical
 string connect::checkVertical(string player)
 {
-    //for vertical
     for (int x = 0; x <= r; x++)
     {
         if (board[c - x][insert] == player)
         {
-            cout << "condition one is true" << endl
-                 << count;
             ++count;
-            cout << endl
-                 << count << " matching disk found " << player << endl;
-        }
-        else{
-            break;
         }
     }
     if (count >= p)
@@ -127,7 +138,14 @@ void connect::insertDisk(int rowNum, string player)
         if (board[temp][rowNum] == "O")
         {
             board[temp][rowNum] = player;
-            winner = checkVertical(player);
+
+        winner = checkVertical(player);
+            if (winner == "r" || winner == "y")
+            {}
+            else{
+                winner = checkH(player);
+            }
+            
             break;
         }
         --temp;
@@ -145,11 +163,10 @@ connect::connect()
     cin >> c;
     cout << "Enter win connections required:-" << endl;
     cin >> p;
+    maxTurns = r * c;
 }
 void connect::initialize()
 {
-    maxTurns = (r*c)+1;
-    turnCount = 1;
     for (int i = 1; i <= c; i++)
     {
         board[0][i] = to_string(i);
